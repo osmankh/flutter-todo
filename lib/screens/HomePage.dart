@@ -3,6 +3,8 @@ import 'package:todo_list/screens/PageTemplate.dart';
 import 'package:todo_list/widgets/FloatingButton.dart';
 import 'package:todo_list/widgets/TaskCard.dart';
 
+import 'TaskPage.dart';
+
 class Homepage extends StatefulWidget {
   @override
   _HomepageState createState() => _HomepageState();
@@ -45,7 +47,22 @@ class _HomepageState extends State<Homepage> {
               )
             ],
           ),
-          FloatingButton()
+          FloatingButton(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TaskPage()
+                ),
+              );
+            },
+            icon: Image(
+                image: AssetImage(
+                    "assets/images/add_icon.png"
+                )
+            ),
+            color: Color(0xFF7349FE),
+          )
         ],
       )
     );
