@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_list/helpers/database_helper.dart';
 import 'package:todo_list/screens/PageTemplate.dart';
 import 'package:todo_list/widgets/FloatingButton.dart';
 import 'package:todo_list/widgets/TaskCard.dart';
@@ -11,6 +12,8 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  DatabaseHelper _dbHelper = DatabaseHelper();
+
   @override
   Widget build(BuildContext context) {
     return PageTemplate(
@@ -30,19 +33,26 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
               Expanded(
-                child: ListView(
-                  children: [
-                    TaskCard(
-                      title: "First Task",
-                      description: "Hello User! Welcome to WHAT_TODO app, this is a default task that you can edit or delete to start using the app.",
-                    ),
-                    TaskCard(),
-                    TaskCard(),
-                    TaskCard(),
-                    TaskCard(),
-                    TaskCard(),
-                    TaskCard(),
-                  ],
+                child: FutureBuilder(
+                  initialData: [],
+                  future: _dbHelper.getTasks(),
+                  builder: (context, snapshot) {
+                    return ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => TaskPage(
+                              task: snapshot.data[index]
+                            )));
+                          },
+                          child: TaskCard(
+                            title: snapshot.data[index].title,
+                          ),
+                        );
+                      }
+                    );
+                  }
                 ),
               )
             ],
@@ -52,9 +62,11 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => TaskPage()
+                    builder: (context) => TaskPage(task: null,)
                 ),
-              );
+              ).then((value) {
+                setState(() {});
+              });
             },
             icon: Image(
                 image: AssetImage(
